@@ -1,0 +1,57 @@
+body {
+  font-family: sans-serif;
+  background-color: #eef5ed;
+}
+
+h1 {
+  text-align: center;
+  color: #8e6264;
+}
+
+a {
+  color: #4d99b7;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.kana {
+  font-size: 300%;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.kanabox {
+  margin: auto;
+  width: 42em;
+  padding: .7em 2em 0em 2em;
+  background-color: #fff;
+  border-radius: 3px;
+}
+
+.input {
+  text-align: center;
+  margin-top: .8em;
+}
+
+.input-box {
+  width: 16em;
+  border: 1px solid #eee;
+  padding: 6px;
+  text-align: center;
+  font-size: 100%;
+  color: #3d1e1e;
+}
+
+.message {
+  text-align: center;
+  font-size: 90%;
+  margin-top: 1em;
+  padding-bottom: 2em;
+}
+
+.answer {
+  text-align: center;
+  margin-bottom: .4em;
+  font-size: 90%;
+}
