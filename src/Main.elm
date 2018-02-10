@@ -2,7 +2,7 @@ module Main exposing (..)
 
 import Html exposing (Html, text, div, h1, input, span)
 import Html.Attributes exposing (src, class, style)
-import Html.Events exposing (onMouseOver, onMouseOut)
+import Html.Events exposing (onMouseOver, onMouseOut, onInput)
 
 
 ---- MODEL ----
@@ -13,12 +13,12 @@ type alias Kana =
 
 
 type alias Model =
-    { currentKana : Kana, total : Int, correct : Int, hideAnswer : Bool }
+    { currentKana : Kana, total : Int, correct : Int, hideAnswer : Bool, showCorrection : Bool }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Kana "ひ" "hi") 0 0 True, Cmd.none )
+    ( Model (Kana "ひ" "hi") 0 0 True False, Cmd.none )
 
 
 
@@ -27,6 +27,7 @@ init =
 
 type Msg
     = ToggleAnswer
+    | Input String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -34,6 +35,14 @@ update msg model =
     case msg of
         ToggleAnswer ->
             ( { model | hideAnswer = (not model.hideAnswer) }, Cmd.none )
+
+        Input str ->
+            ( { model | showCorrection = isInputCorrect str model.currentKana.answer }, Cmd.none )
+
+
+isInputCorrect : String -> String -> Bool
+isInputCorrect input answer =
+    not (String.startsWith input answer)
 
 
 
@@ -49,15 +58,20 @@ view model =
             , div [ class "kana" ]
                 [ span [ onMouseOver ToggleAnswer, onMouseOut ToggleAnswer ] [ text (model.currentKana.character) ]
                 ]
-            , div [ class "input" ] [ input [ class "input-box" ] [] ]
-            , div [ class "message" ] [ text getMessage ]
+            , div [ class "input" ] [ input [ class "input-box", onInput Input ] [] ]
+            , instructions model.showCorrection model.currentKana
             ]
         ]
 
 
-getMessage : String
-getMessage =
-    "Hover over the kana to show its romanization and type the answer."
+instructions : Bool -> Kana -> Html.Html msg
+instructions showCorrection kana =
+    case showCorrection of
+        False ->
+            div [ class "message" ] [ text "Hover over the kana to show its romanization and type the answer." ]
+
+        True ->
+            div [ class "message", style [ ( "color", "red" ) ] ] [ text (kana.character ++ " = " ++ kana.answer) ]
 
 
 getAnswerStyle : Bool -> List ( String, String )
