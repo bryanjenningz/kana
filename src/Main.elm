@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import Html exposing (Html, text, div, h1, input, span)
+import Html exposing (Html, text, div, h1, input, span, ul, li)
 import Html.Attributes exposing (src, class, style)
 import Html.Events exposing (onMouseOver, onMouseOut, onInput)
 
@@ -37,7 +37,12 @@ update msg model =
             ( { model | hideAnswer = (not model.hideAnswer) }, Cmd.none )
 
         Input str ->
-            ( { model | showCorrection = isInputCorrect str model.currentKana.answer }, Cmd.none )
+            case str == model.currentKana.answer of
+                True ->
+                    ( { model | correct = model.correct + 1, total = model.total + 1 }, Cmd.none )
+
+                False ->
+                    ( { model | showCorrection = isInputCorrect str model.currentKana.answer }, Cmd.none )
 
 
 isInputCorrect : String -> String -> Bool
@@ -60,6 +65,8 @@ view model =
                 ]
             , div [ class "input" ] [ input [ class "input-box", onInput Input ] [] ]
             , instructions model.showCorrection model.currentKana
+            , ul [ class "tools" ] [ li [ class "sound" ] [], li [ class "stroke" ] [] ]
+            , div [ class "counter" ] [ text (getCounterText model.correct model.total) ]
             ]
         ]
 
@@ -72,6 +79,16 @@ instructions showCorrection kana =
 
         True ->
             div [ class "message", style [ ( "color", "red" ) ] ] [ text (kana.character ++ " = " ++ kana.answer) ]
+
+
+getCounterText : Int -> Int -> String
+getCounterText correct total =
+    case total of
+        0 ->
+            ""
+
+        _ ->
+            toString correct ++ "/" ++ toString total
 
 
 getAnswerStyle : Bool -> List ( String, String )

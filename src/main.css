@@ -55,3 +55,26 @@ a {
   margin-bottom: .4em;
   font-size: 90%;
 }
+
+ul.tools, .counter {
+  display: block;
+  margin-top: 1em;
+  font-size: 78%;
+}
+
+ul.tools {
+  padding: 0px;
+  display: inline-block;
+}
+
+ul.tools li {
+  display:inline;
+  list-style-type: none;
+
+  margin-right:1.2em;
+  font-weight: bold;
+}
+
+.counter {
+  float: right;
+}
