@@ -23,18 +23,19 @@ type AnswerResult
 
 
 type alias Model =
-    { currentKana : Kana
-    , total : Int
-    , correct : Int
-    , hideAnswer : Bool
-    , showCorrection : Bool
-    , input : String
+    { currentKana : Kana -- Current kana character
+    , total : Int -- Total answers
+    , correct : Int -- Correct answers
+    , hideAnswer : Bool -- Used for showing the answer on kana hover
+    , showCorrection : Bool -- Used for showing correction on wrong input
+    , wasWrong : Bool -- Was the last input wrong? Used for calculating `total`
+    , input : String -- User input
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Kana "ひ" "hi") 0 0 True False "", Random.generate NewKana (sample kanas) )
+    ( Model (Kana "ひ" "hi") 0 0 True False False "", Random.generate NewKana (sample kanas) )
 
 
 
@@ -64,13 +65,21 @@ update msg model =
         Input input ->
             case checkInput input model.currentKana.answer of
                 Correct ->
-                    ( { model | input = "", correct = model.correct + 1, total = model.total + 1, showCorrection = False }, Random.generate NewKana (sample kanas) )
+                    ( { model | input = "", wasWrong = False, correct = calculateCorrect model.correct model.wasWrong, total = model.total + 1, showCorrection = False }, Random.generate NewKana (sample kanas) )
 
                 Incorrect ->
-                    ( { model | total = model.total + 1, input = input, showCorrection = True }, Cmd.none )
+                    ( { model | wasWrong = True, input = input, showCorrection = True }, Cmd.none )
 
                 NotFinished ->
                     ( { model | input = input, showCorrection = False }, Cmd.none )
+
+
+calculateCorrect : Int -> Bool -> Int
+calculateCorrect currentCorrect wasWrong =
+    if wasWrong then
+        currentCorrect
+    else
+        currentCorrect + 1
 
 
 checkInput : String -> String -> AnswerResult
