@@ -4,21 +4,13 @@ import Array exposing (Array)
 import Html exposing (Html, text, div, h1, input, span, ul, li)
 import Html.Attributes exposing (src, class, style, value)
 import Html.Events exposing (onMouseOver, onMouseOut, onInput)
+import Kana exposing (Kana, kanas)
 import Random
 import Random.Array exposing (sample)
 import Maybe exposing (Maybe)
 
 
 ---- MODEL ----
-
-
-type alias Kana =
-    { character : String, answer : String }
-
-
-kanas : Array Kana
-kanas =
-    Array.fromList [ (Kana "ひ" "hi"), (Kana "あ" "a") ]
 
 
 type alias Model =
@@ -33,7 +25,7 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Kana "ひ" "hi") 0 0 True False "", Cmd.none )
+    ( Model (Kana "ひ" "hi") 0 0 True False "", Random.generate NewKana (sample kanas) )
 
 
 
