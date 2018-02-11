@@ -13,6 +13,12 @@ import Maybe exposing (Maybe)
 ---- MODEL ----
 
 
+type AnswerResult
+    = Correct
+    | Incorrect
+    | NotFinished
+
+
 type alias Model =
     { currentKana : Kana
     , total : Int
@@ -53,17 +59,26 @@ update msg model =
             ( { model | hideAnswer = (not model.hideAnswer) }, Cmd.none )
 
         Input str ->
-            case str == model.currentKana.answer of
-                True ->
-                    ( { model | input = "", correct = model.correct + 1, total = model.total + 1 }, Random.generate NewKana (sample kanas) )
+            case compareInput str model.currentKana.answer of
+                Correct ->
+                    ( { model | input = "", correct = model.correct + 1, total = model.total + 1, showCorrection = False }, Random.generate NewKana (sample kanas) )
 
-                False ->
-                    ( { model | input = str, showCorrection = (isInputCorrect str model.currentKana.answer) }, Cmd.none )
+                Incorrect ->
+                    ( { model | total = model.total + 1, input = str, showCorrection = True }, Cmd.none )
+
+                NotFinished ->
+                    ( { model | input = str, showCorrection = False }, Cmd.none )
 
 
-isInputCorrect : String -> String -> Bool
-isInputCorrect input answer =
-    not (String.startsWith input answer)
+compareInput : String -> String -> AnswerResult
+compareInput input answer =
+    if input == answer then
+        Correct
+    else if String.startsWith input answer == True then
+        -- If input is partially correct, but user hasn't finished typing yet
+        NotFinished
+    else
+        Incorrect
 
 
 
