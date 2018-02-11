@@ -1,9 +1,12 @@
 module Main exposing (..)
 
-import Array exposing (Array)
 import Html exposing (Html, text, div, h1, input, span, ul, li)
 import Html.Attributes exposing (src, class, style, value)
 import Html.Events exposing (onMouseOver, onMouseOut, onInput)
+
+
+--import List exposing (List)
+
 import Kana exposing (Kana, kanas)
 import Random
 import Random.Array exposing (sample)
@@ -58,16 +61,30 @@ update msg model =
         ToggleAnswer ->
             ( { model | hideAnswer = (not model.hideAnswer) }, Cmd.none )
 
-        Input str ->
-            case compareInput str model.currentKana.answer of
+        Input input ->
+            case checkInput input model.currentKana.answer of
                 Correct ->
                     ( { model | input = "", correct = model.correct + 1, total = model.total + 1, showCorrection = False }, Random.generate NewKana (sample kanas) )
 
                 Incorrect ->
-                    ( { model | total = model.total + 1, input = str, showCorrection = True }, Cmd.none )
+                    ( { model | total = model.total + 1, input = input, showCorrection = True }, Cmd.none )
 
                 NotFinished ->
-                    ( { model | input = str, showCorrection = False }, Cmd.none )
+                    ( { model | input = input, showCorrection = False }, Cmd.none )
+
+
+checkInput : String -> String -> AnswerResult
+checkInput input answers =
+    let
+        answerResults =
+            String.split "," answers |> List.map (\answer -> compareInput input answer)
+    in
+        if List.any (\x -> x == NotFinished) answerResults then
+            NotFinished
+        else if List.any (\x -> x == Correct) answerResults then
+            Correct
+        else
+            Incorrect
 
 
 compareInput : String -> String -> AnswerResult
