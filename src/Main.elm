@@ -62,7 +62,15 @@ update msg model =
         Input input ->
             case checkInput input model.currentKana.answer of
                 Correct ->
-                    ( { model | input = "", wasWrong = False, correct = calculateCorrect model.correct model.wasWrong, total = model.total + 1, showCorrection = False }, Random.generate NewKana (sample kanas) )
+                    ( { model
+                        | input = ""
+                        , wasWrong = False
+                        , correct = calculateCorrect model.correct model.wasWrong
+                        , total = model.total + 1
+                        , showCorrection = False
+                      }
+                    , Random.generate NewKana (sample kanas)
+                    )
 
                 Incorrect ->
                     ( { model | wasWrong = True, input = input, showCorrection = True }, Cmd.none )
