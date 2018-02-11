@@ -3,10 +3,7 @@ module Main exposing (..)
 import Html exposing (Html, text, div, h1, input, span, ul, li)
 import Html.Attributes exposing (src, class, style, value)
 import Html.Events exposing (onMouseOver, onMouseOut, onInput)
-
-
---import List exposing (List)
-
+import Instructions exposing (instructions)
 import Kana exposing (Kana, kanas)
 import Random
 import Random.Array exposing (sample)
@@ -135,16 +132,6 @@ view model =
             , div [ class "counter" ] [ text (getCounterText model.correct model.total) ]
             ]
         ]
-
-
-instructions : Bool -> Kana -> Html.Html msg
-instructions showCorrection kana =
-    case showCorrection of
-        False ->
-            div [ class "message" ] [ text "Hover over the kana to show its romanization and type the answer." ]
-
-        True ->
-            div [ class "message", style [ ( "color", "red" ) ] ] [ text (kana.character ++ " = " ++ kana.answer) ]
 
 
 getCounterText : Int -> Int -> String
